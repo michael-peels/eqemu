@@ -162,6 +162,8 @@ public:
 		uint8 in_feettexture,
 		uint16 in_usemodel
 	);
+	// custom MP
+	double MPCalcPctBonus(int32 stat);
 	virtual ~Mob();
 
 	inline virtual bool IsMob() const { return true; }
@@ -293,6 +295,8 @@ public:
 	void NegateSpellsBonuses(uint16 spell_id);
 	virtual float GetActSpellRange(uint16 spell_id, float range, bool IsBard = false);
 	virtual int32 GetActSpellDamage(uint16 spell_id, int32 value, Mob* target = nullptr);
+	// custom MP
+	int32 MPCalcSpellDamageBonus(int32 spellDmg);
 	virtual int32 GetActDoTDamage(uint16 spell_id, int32 value, Mob* target);
 	virtual int32 GetActSpellHealing(uint16 spell_id, int32 value, Mob* target = nullptr);
 	virtual int32 GetActSpellCost(uint16 spell_id, int32 cost){ return cost;}

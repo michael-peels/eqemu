@@ -129,7 +129,7 @@ int32 Mob::GetActSpellDamage(uint16 spell_id, int32 value, Mob* target) {
 			if (IsClient())
 				MessageString(Chat::SpellCrit, YOU_CRIT_BLAST, itoa(-value));
 
-			return value;
+			return MPCalcSpellDamageBonus(value);
 		}
 	}
 	//Non Crtical Hit Calculation pathway
@@ -159,7 +159,26 @@ int32 Mob::GetActSpellDamage(uint16 spell_id, int32 value, Mob* target) {
 	if (IsNPC() && CastToNPC()->GetSpellScale())
 		value = int(static_cast<float>(value) * CastToNPC()->GetSpellScale() / 100.0f);
 
-	return value;
+	return MPCalcSpellDamageBonus(value);
+}
+
+int32 Mob::MPCalcSpellDamageBonus(int32 spellDmg) {
+	double totalPctIncrease = 0.0;
+	// bonus dmg based on int / wis
+	if (IsClient() || IsBot()) {
+		totalPctIncrease = MPCalcPctBonus(GetINT()) + MPCalcPctBonus(GetWIS());
+	}
+	// if is bot / client's pet, add dmg based on owner charisma
+	else if (IsPet() && (IsPetOwnerClient() || GetOwner()->IsBot())) {
+		double totalPctIncrease = MPCalcPctBonus(GetOwner()->GetCHA());
+	}
+	if (totalPctIncrease > 0) {
+		LogCombat("Total spell pct increase: [{}]", totalPctIncrease);
+		LogCombat("Orig spell dmg done: [{}]", spellDmg);
+		spellDmg += spellDmg * totalPctIncrease;
+		LogCombat("Post increase spell dmg done: [{}]", spellDmg);
+	}
+	return spellDmg;
 }
 
 int32 Mob::GetActDoTDamage(uint16 spell_id, int32 value, Mob* target) {

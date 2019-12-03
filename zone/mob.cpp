@@ -454,6 +454,13 @@ Mob::Mob(
 	npc_assist_cap = 0;
 }
 
+// custom MP
+double Mob::MPCalcPctBonus(int32 stat) {
+	double bonusPct = std::max(stat - 120, 0) / 100.0;
+	LogCombat("Calculated bonus damage pct of [{}]", bonusPct);
+	return bonusPct;
+}
+
 Mob::~Mob()
 {
 	mMovementManager->RemoveMob(this);
