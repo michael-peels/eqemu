@@ -185,7 +185,7 @@ RULE_INT(Guild, PlayerCreationRequiredTime, 0, "Required Time Entitled On Accoun
 RULE_CATEGORY_END()
 
 RULE_CATEGORY(Skills)
-RULE_INT(Skills, MaxTrainTradeskills, 21, "")
+RULE_INT(Skills, MaxTrainTradeskills, 200, "") // custom MP
 RULE_BOOL(Skills, UseLimitTradeskillSearchSkillDiff, true, "")
 RULE_INT(Skills, MaxTradeskillSearchSkillDiff, 50, "")
 RULE_INT(Skills, MaxTrainSpecializations, 50, "Max level a GM trainer will train casting specializations")

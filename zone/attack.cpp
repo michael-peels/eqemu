@@ -1647,7 +1647,7 @@ bool Client::Death(Mob* killerMob, int32 damage, uint16 spell, EQEmu::skills::Sk
 		return false;
 	}
 
-	if (killerMob && killerMob->IsClient() && (spell != SPELL_UNKNOWN) && damage > 0) {
+	if (killerMob && (killerMob->IsClient() || killerMob->IsBot()) && (spell != SPELL_UNKNOWN) && damage > 0) {
 		char val1[20] = { 0 };
 
 		entity_list.MessageCloseString(
@@ -3745,6 +3745,21 @@ void Mob::CommonDamage(Mob* attacker, int &damage, const uint16 spell_id, const 
 
 					attacker->CastToClient()->QueuePacket(outapp, true, CLIENT_CONNECTED, filter);
 				}
+			}
+
+			// CUSTOM MP -- show bot spell damage
+			if (attacker && attacker->IsBot() && !FromDamageShield && damage > 0 && spell_id != SPELL_UNKNOWN) {
+				char val1[20] = { 0 };
+				entity_list.MessageCloseString(
+					this, /* Sender */
+					true, /* Skip Sender */
+					RuleI(Range, SpellMessages),
+					Chat::NonMelee, /* 283 */
+					HIT_NON_MELEE, /* %1 hit %2 for %3 points of non-melee damage. */
+					attacker->GetCleanName(), /* Message1 */
+					GetCleanName(), /* Message2 */
+					ConvertArray(damage, val1) /* Message3 */
+				);
 			}
 			skip = attacker;
 		}

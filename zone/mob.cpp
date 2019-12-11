@@ -456,7 +456,7 @@ Mob::Mob(
 
 // custom MP
 double Mob::MPCalcPctBonus(int32 stat) {
-	double bonusPct = std::max(stat - 120, 0) / 100.0;
+	double bonusPct = std::max(stat - 100, 0) / 100.0;
 	LogCombat("Calculated bonus damage pct of [{}]", bonusPct);
 	return bonusPct;
 }

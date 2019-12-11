@@ -166,6 +166,9 @@ int32 Mob::MPCalcSpellDamageBonus(int32 spellDmg) {
 	double totalPctIncrease = 0.0;
 	// bonus dmg based on int / wis
 	if (IsClient() || IsBot()) {
+		if (IsBot()) {
+			LogCombat("Triggered bot spell damage! [{}]", spellDmg);
+		}
 		totalPctIncrease = MPCalcPctBonus(GetINT()) + MPCalcPctBonus(GetWIS());
 	}
 	// if is bot / client's pet, add dmg based on owner charisma

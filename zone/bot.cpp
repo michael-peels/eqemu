@@ -6683,7 +6683,8 @@ int32 Bot::GetActSpellDamage(uint16 spell_id, int32 value, Mob* target) {
 	value -= GetBotFocusEffect(BotfocusFcDamageAmt, spell_id);
 	if(itembonuses.SpellDmg && spells[spell_id].classes[(GetClass() % 17) - 1] >= GetLevel() - 5)
 		value += GetExtraSpellAmt(spell_id, itembonuses.SpellDmg, value);
-
+	// CUSTOM MP -- this works, wonder why the animation doesn't happen?
+	LogCombat("Bot -- [{}] --calc spell damage result: [{}]",GetName(), value);
 	return value;
  }
 
