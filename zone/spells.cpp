@@ -4657,6 +4657,10 @@ float Mob::ResistSpell(uint8 resist_type, uint16 spell_id, Mob *caster, bool use
 		float min_charmbreakchance = ((100.0f/static_cast<float>(RuleI(Spells, CharmBreakCheckChance)))/66.0f * 100.0f)*2.0f;
 		if (resist_chance < static_cast<int>(min_charmbreakchance))
 			resist_chance = min_charmbreakchance;
+		// custom mp, charm never resists/breaks early
+		if (!this->IsClient()) {
+			resist_chance = 0;
+		}
 	}
 
 	//Average root duration agianst mobs with 0% chance to resist on LIVE is ~ 22 ticks (6% resist chance).
@@ -4664,7 +4668,10 @@ float Mob::ResistSpell(uint8 resist_type, uint16 spell_id, Mob *caster, bool use
 	if (IsRoot) {
 
 		float min_rootbreakchance = ((100.0f/static_cast<float>(RuleI(Spells, RootBreakCheckChance)))/22.0f * 100.0f)*2.0f;
-
+		// custom mp increase root break chance for client
+		if (this->IsClient() && min_rootbreakchance < 50) {
+			min_rootbreakchance = 50.0;
+		}
 		if (resist_chance < static_cast<int>(min_rootbreakchance))
 			resist_chance = min_rootbreakchance;
 	}
@@ -4789,7 +4796,8 @@ int16 Mob::CalcFearResistChance()
 	}
 	if(spellbonuses.Fearless == true || itembonuses.Fearless == true)
 		resistchance = 100;
-
+	// custom MP increase fear resist chance
+	resistchance = std::min(resistchance, 50);
 	return resistchance;
 }
 
