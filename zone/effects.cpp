@@ -249,6 +249,8 @@ int32 Mob::GetActDoTDamage(uint16 spell_id, int32 value, Mob* target) {
 
 	if (IsNPC() && CastToNPC()->GetSpellScale())
 		value = int(static_cast<float>(value) * CastToNPC()->GetSpellScale() / 100.0f);
+	// custom mp, increase dot damage
+	value = MPCalcSpellDamageWithBonus(value);
 
 	return value;
 }

@@ -4658,15 +4658,24 @@ float Mob::ResistSpell(uint8 resist_type, uint16 spell_id, Mob *caster, bool use
 		if (resist_chance < static_cast<int>(min_charmbreakchance))
 			resist_chance = min_charmbreakchance;
 		// custom mp, charm never resists/breaks early
-		if (!this->IsClient()) {
-			resist_chance = 0;
+		if (!caster->IsClient()) {
+			return 0;
+		} 
+		if (caster->IsClient()) {
+			return 100;
 		}
 	}
 
 	//Average root duration agianst mobs with 0% chance to resist on LIVE is ~ 22 ticks (6% resist chance).
 	//Minimum resist chance should be caclulated factoring in the RuleI(Spells, RootBreakCheckChance)
 	if (IsRoot) {
-
+		// custom mp, root never breaks on targets, always breaks on client
+		if (!caster->IsClient()) {
+			return 0;
+		}
+		if (caster->IsClient()) {
+			return 100;
+		}
 		float min_rootbreakchance = ((100.0f/static_cast<float>(RuleI(Spells, RootBreakCheckChance)))/22.0f * 100.0f)*2.0f;
 		// custom mp increase root break chance for client
 		if (this->IsClient() && min_rootbreakchance < 50) {

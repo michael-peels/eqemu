@@ -6351,7 +6351,8 @@ int32 Bot::CheckHealAggroAmount(uint16 spellid, Mob *target, uint32 heal_possibl
 	int32 AggroAmount = Mob::CheckHealAggroAmount(spellid, target, heal_possible);
 	int32 focusAggro = GetBotFocusEffect(BotfocusSpellHateMod, spellid);
 	AggroAmount = (AggroAmount * (100 + focusAggro) / 100);
-	return AggroAmount;
+	// CUSTOM MP -- no aggro from healing
+	return 0;
 }
 
 void Bot::MakePet(uint16 spell_id, const char* pettype, const char *petname) {
