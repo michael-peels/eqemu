@@ -1381,9 +1381,9 @@ void Mob::DoAttack(Mob *other, DamageHitInfo &hit, ExtraAttackOptions *opts)
 				if (totalReduction > 0) {
 					double reductionPct = totalReduction / (totalReduction + (175 - totalReduction / 3));
 					LogCombat("Reduction percent: [{}]", reductionPct);
-					LogCombat("Orig reduction dmg: [{}]", hit.damage_done);
+					LogCombat("Orig dmg: [{}]", hit.damage_done);
 					hit.damage_done -= hit.damage_done * reductionPct;
-					LogCombat("Post Reduction dmg: [{}]", hit.damage_done);
+					LogCombat("Post reduction dmg: [{}]", hit.damage_done);
 				}
 				// END CUSTOM MP
 			}

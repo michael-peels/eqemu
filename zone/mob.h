@@ -296,7 +296,8 @@ public:
 	virtual float GetActSpellRange(uint16 spell_id, float range, bool IsBard = false);
 	virtual int32 GetActSpellDamage(uint16 spell_id, int32 value, Mob* target = nullptr);
 	// custom MP
-	int32 MPCalcSpellDamageWithBonus(int32 spellDmg);
+	int32 MPCalcSpellDamageWithBonus(int32 spellDmg, Mob* target, uint16 spell_id);
+	// end custom MP
 	virtual int32 GetActDoTDamage(uint16 spell_id, int32 value, Mob* target);
 	virtual int32 GetActSpellHealing(uint16 spell_id, int32 value, Mob* target = nullptr);
 	virtual int32 GetActSpellCost(uint16 spell_id, int32 cost){ return cost;}

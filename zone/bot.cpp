@@ -6685,9 +6685,7 @@ int32 Bot::GetActSpellDamage(uint16 spell_id, int32 value, Mob* target) {
 	if(itembonuses.SpellDmg && spells[spell_id].classes[(GetClass() % 17) - 1] >= GetLevel() - 5)
 		value += GetExtraSpellAmt(spell_id, itembonuses.SpellDmg, value);
 	// CUSTOM MP -- this works, wonder why the animation doesn't happen?
-	LogCombat("Bot- [{}] Pre increase spell damage: [{}]",GetName(), value);
-	value = MPCalcSpellDamageWithBonus(value);
-	LogCombat("Bot- [{}] Post increment spell damage: [{}]", GetName(), value);
+	value = MPCalcSpellDamageWithBonus(value, target, spell_id);
 	return value;
  }
 
@@ -6736,7 +6734,7 @@ int32 Bot::GetActSpellHealing(uint16 spell_id, int32 value, Mob* target) {
 			return (value * 2);
 	}
 	// Custom MP
-	value = MPCalcSpellDamageWithBonus(value);
+	value = MPCalcSpellDamageWithBonus(value, target, spell_id);
 	return value;
 }
 

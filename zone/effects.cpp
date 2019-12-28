@@ -129,7 +129,7 @@ int32 Mob::GetActSpellDamage(uint16 spell_id, int32 value, Mob* target) {
 			if (IsClient())
 				MessageString(Chat::SpellCrit, YOU_CRIT_BLAST, itoa(-value));
 
-			return MPCalcSpellDamageWithBonus(value);
+			return MPCalcSpellDamageWithBonus(value, target, spell_id);
 		}
 	}
 	//Non Crtical Hit Calculation pathway
@@ -159,10 +159,10 @@ int32 Mob::GetActSpellDamage(uint16 spell_id, int32 value, Mob* target) {
 	if (IsNPC() && CastToNPC()->GetSpellScale())
 		value = int(static_cast<float>(value) * CastToNPC()->GetSpellScale() / 100.0f);
 
-	return MPCalcSpellDamageWithBonus(value);
+	return MPCalcSpellDamageWithBonus(value, target, spell_id);
 }
 
-int32 Mob::MPCalcSpellDamageWithBonus(int32 spellDmg) {
+int32 Mob::MPCalcSpellDamageWithBonus(int32 spellDmg, Mob* target, uint16 spell_id) {
 	double totalPctIncrease = 0.0;
 	// bonus dmg based on int / wis
 	if (IsClient() || IsBot()) {
@@ -181,8 +181,36 @@ int32 Mob::MPCalcSpellDamageWithBonus(int32 spellDmg) {
 		spellDmg += spellDmg * totalPctIncrease;
 		LogCombat("Post increase spell dmg done: [{}]", spellDmg);
 	}
+	// Reduce damage based on agi / stam
+	if (target->IsClient() || target->IsBot() || (target->IsPet() && (target->IsPetOwnerClient() || target->GetOwner()->IsBot()))) {
+		int32 totalReduction = 0;
+		switch (GetSpellResistType(spell_id)) {
+		case RESIST_MAGIC:
+			totalReduction = (std::max(GetMR(), 0));
+			break;
+		case RESIST_DISEASE:
+			totalReduction = (std::max(GetDR(), 0));
+			break;
+		case RESIST_POISON:
+			totalReduction = (std::max(GetPR(), 0));
+			break;
+		case RESIST_FIRE:
+			totalReduction = (std::max(GetFR(), 0));
+			break;
+		case RESIST_COLD:
+			totalReduction = (std::max(GetCR(), 0));
+			break;
+		}
+		
+		double reductionPct = totalReduction / (totalReduction + (50 - totalReduction / 3));
+		LogCombat("Reduction percent: [{}]", reductionPct);
+		LogCombat("Orig dmg: [{}]", spellDmg);
+		spellDmg -= spellDmg * reductionPct;
+		LogCombat("Post Reduction dmg: [{}]", spellDmg);
+	}
 	return spellDmg;
 }
+
 
 int32 Mob::GetActDoTDamage(uint16 spell_id, int32 value, Mob* target) {
 
@@ -250,7 +278,7 @@ int32 Mob::GetActDoTDamage(uint16 spell_id, int32 value, Mob* target) {
 	if (IsNPC() && CastToNPC()->GetSpellScale())
 		value = int(static_cast<float>(value) * CastToNPC()->GetSpellScale() / 100.0f);
 	// custom mp, increase dot damage
-	value = MPCalcSpellDamageWithBonus(value);
+	value = MPCalcSpellDamageWithBonus(value, target, spell_id);
 
 	return value;
 }
