@@ -171,6 +171,14 @@ int32 Mob::MPCalcSpellDamageWithBonus(int32 spellDmg, Mob* target, uint16 spell_
 	// if is bot / client's pet, add dmg based on owner charisma
 	else if (IsPet() && (IsPetOwnerClient() || GetOwner()->IsBot())) {
 		double totalPctIncrease = MPCalcPctBonus(GetOwner()->GetCHA());
+
+		// Check for Combat Frenzy buff on user / bot
+		totalPctIncrease += MPGetCombatFrenzyIncrease();
+
+		// Check if Combat Frenzy should proc
+		if ((rand() % 100 + 1) > 80) {
+			MPProcCombatFrenzy();
+		}
 	}
 	if (totalPctIncrease > 0) {
 		LogCombat("Total spell pct increase: [{}]", totalPctIncrease);
