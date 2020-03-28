@@ -390,6 +390,8 @@ public:
 	void DamageShield(Mob* other, bool spell_ds = false);
 	int32 RuneAbsorb(int32 damage, uint16 type);
 	bool FindBuff(uint16 spellid);
+	double MPGetCombatFrenzyIncrease();
+	void MPProcCombatFrenzy();
 	uint16 FindBuffBySlot(int slot);
 	uint32 BuffCount();
 	bool FindType(uint16 type, bool bOffensive = false, uint16 threshold = 100);

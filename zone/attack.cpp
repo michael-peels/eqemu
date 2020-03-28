@@ -1357,12 +1357,22 @@ void Mob::DoAttack(Mob *other, DamageHitInfo &hit, ExtraAttackOptions *opts)
 				// Custom MP - add dmg from Str/Dex on player or bot hit
 				double totalPctIncrease = 0.0;
 				if (IsClient() || IsBot()) {
-					totalPctIncrease = MPCalcPctBonus(GetSTR()) + MPCalcPctBonus(GetDEX());					
+					totalPctIncrease = MPCalcPctBonus(GetSTR()) + MPCalcPctBonus(GetDEX());
+
+					// Check for Combat Frenzy buff on user / bot
+					totalPctIncrease += MPGetCombatFrenzyIncrease();
+
+					// Check if Combat Frenzy should proc
+					if ((rand() % 100 + 1) > 95) {
+						MPProcCombatFrenzy();
+					}
+					
 				}
 				// if is bot / client's pet, add dmg based on owner charisma
 				else if (IsPet() && (IsPetOwnerClient() || GetOwner()->IsBot())) {
-					double totalPctIncrease = MPCalcPctBonus(GetOwner()->GetCHA());
+					double totalPctIncrease = MPCalcPctBonus(GetOwner()->GetCHA() + 25);
 				}
+
 				if (totalPctIncrease > 0) {
 					LogCombat("Total pct increase: [{}]", totalPctIncrease);
 					LogCombat("Orig dmg done: [{}]", hit.damage_done);
@@ -1376,7 +1386,7 @@ void Mob::DoAttack(Mob *other, DamageHitInfo &hit, ExtraAttackOptions *opts)
 					totalReduction = (std::max(other->GetSTA() - 100, 0) + std::max(other->GetAGI() - 100, 0));
 				}
 				else if (other->IsPet() && (other->IsPetOwnerClient() || other->GetOwner()->IsBot())) {
-					totalReduction = std::max(other->GetOwner()->GetCHA() - 100, 0);
+					totalReduction = std::max(other->GetOwner()->GetCHA() - 75, 0);
 				}
 				if (totalReduction > 0) {
 					double reductionPct = totalReduction / (totalReduction + (175 - totalReduction / 3));

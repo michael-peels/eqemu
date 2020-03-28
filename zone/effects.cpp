@@ -165,10 +165,7 @@ int32 Mob::GetActSpellDamage(uint16 spell_id, int32 value, Mob* target) {
 int32 Mob::MPCalcSpellDamageWithBonus(int32 spellDmg, Mob* target, uint16 spell_id) {
 	double totalPctIncrease = 0.0;
 	// bonus dmg based on int / wis
-	if (IsClient() || IsBot()) {
-		if (IsBot()) {
-			LogCombat("Triggered bot spell damage! [{}]", spellDmg);
-		}
+	if ((IsClient() || IsBot()) && (!target->IsClient() || !target->IsBot())) {
 		totalPctIncrease = MPCalcPctBonus(GetINT()) + MPCalcPctBonus(GetWIS());
 	}
 	// if is bot / client's pet, add dmg based on owner charisma
@@ -181,9 +178,9 @@ int32 Mob::MPCalcSpellDamageWithBonus(int32 spellDmg, Mob* target, uint16 spell_
 		spellDmg += spellDmg * totalPctIncrease;
 		LogCombat("Post increase spell dmg done: [{}]", spellDmg);
 	}
-	// Reduce damage based on agi / stam
+	// Reduce damage based on resists
 	if (target->IsClient() || target->IsBot() || (target->IsPet() && (target->IsPetOwnerClient() || target->GetOwner()->IsBot()))) {
-		int32 totalReduction = 0;
+		double totalReduction = 0.0;
 		switch (GetSpellResistType(spell_id)) {
 		case RESIST_MAGIC:
 			totalReduction = (std::max(GetMR(), 0));
@@ -200,13 +197,16 @@ int32 Mob::MPCalcSpellDamageWithBonus(int32 spellDmg, Mob* target, uint16 spell_
 		case RESIST_COLD:
 			totalReduction = (std::max(GetCR(), 0));
 			break;
+		default:
+			totalReduction = (std::max(GetMR(), 0));
+			break;
 		}
-		
+		LogCombat("Reist score: [{}]", totalReduction);
 		double reductionPct = totalReduction / (totalReduction + (50 - totalReduction / 3));
-		LogCombat("Reduction percent: [{}]", reductionPct);
-		LogCombat("Orig dmg: [{}]", spellDmg);
+		LogCombat("Spell reduction percent: [{}]", reductionPct);
+		LogCombat("Orig spell dmg: [{}]", spellDmg);
 		spellDmg -= spellDmg * reductionPct;
-		LogCombat("Post Reduction dmg: [{}]", spellDmg);
+		LogCombat("Post spell reduction dmg: [{}]", spellDmg);
 	}
 	return spellDmg;
 }

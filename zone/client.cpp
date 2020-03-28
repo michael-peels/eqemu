@@ -2425,15 +2425,15 @@ bool Client::CheckIncreaseSkill(EQEmu::skills::SkillType skillid, Mob *against_w
 		Chance = mod_increase_skill_chance(Chance, against_who);
 
 		if(Chance < 1)
-			Chance = 1; // Make it always possible
+			Chance = 50; // Make it always possible -- custom mp, was 1
 
 		if(zone->random.Real(0, 99) < Chance)
 		{
 			SetSkill(skillid, GetRawSkill(skillid) + 1);
-			LogSkills("Skill [{}] at value [{}] successfully gain with [{}]% chance (mod [{}])", skillid, skillval, Chance, chancemodi);
+			LogSkills("Skill [{}] at value [{}] successfully gain with [{}] percent chance (mod [{}])", skillid, skillval, Chance, chancemodi);
 			return true;
 		} else {
-			LogSkills("Skill [{}] at value [{}] failed to gain with [{}]% chance (mod [{}])", skillid, skillval, Chance, chancemodi);
+			LogSkills("Skill [{}] at value [{}] failed to gain with [{}] percent chance (mod [{}])", skillid, skillval, Chance, chancemodi);
 		}
 	} else {
 		LogSkills("Skill [{}] at value [{}] cannot increase due to maxmum [{}]", skillid, skillval, maxskill);

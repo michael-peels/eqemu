@@ -4043,6 +4043,55 @@ bool Mob::FindBuff(uint16 spellid)
 	return false;
 }
 
+// custom mp
+double Mob::MPGetCombatFrenzyIncrease() {
+	if (FindBuff(42603)) {
+		return 0.1;
+	}
+	if (FindBuff(42604)) {
+		return 0.5;
+	}
+	if (FindBuff(42605)) {
+		return 1;
+	}
+	if (FindBuff(42606)) {
+		return 3;
+	}
+	if (FindBuff(42607)) {
+		return 5;
+	}
+	return 0.0;
+}
+
+void Mob::MPProcCombatFrenzy() {
+	if (FindBuff(42603)) {
+		BuffFadeBySpellID(42603);
+		CastSpell(42604, 0, EQEmu::spells::CastingSlot::Item, 0);
+		return;
+	}
+	if (FindBuff(42604)) {
+		BuffFadeBySpellID(42604);
+		CastSpell(42605, 0, EQEmu::spells::CastingSlot::Item, 0);
+		return;
+	}
+	if (FindBuff(42605)) {
+		BuffFadeBySpellID(42605);
+		CastSpell(42606, 0, EQEmu::spells::CastingSlot::Item, 0);
+		return;
+	}
+	if (FindBuff(42606)) {
+		BuffFadeBySpellID(42606);
+		CastSpell(42607, 0, EQEmu::spells::CastingSlot::Item, 0);
+		return;
+	}
+	if (FindBuff(42607)) {
+		CastSpell(42607, 0, EQEmu::spells::CastingSlot::Item, 0);
+		return;
+	}
+	CastSpell(42603, 0, EQEmu::spells::CastingSlot::Item, 0);
+}
+// end custom mp
+
 uint16 Mob::FindBuffBySlot(int slot) {
 	if (buffs[slot].spellid != SPELL_UNKNOWN)
 		return buffs[slot].spellid;
